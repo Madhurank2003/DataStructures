@@ -1,0 +1,224 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+typedef struct _Prof{
+    int ID;
+    char Name[20];
+    char Branch[20];
+    char Specialization[20];
+}Prof;
+
+typedef struct node{
+    Prof P;
+    struct node* next;
+    struct node* prev;
+}Node;
+
+
+Node* getnode(Prof P){
+    Node* newnode = (Node*)malloc(sizeof(Node));
+    newnode->P = P;
+    newnode->prev = newnode->next = NULL;
+    return newnode;
+}
+
+Prof getdata(){
+    Prof P;
+    printf("Enter the Details Of Professor:\n");
+    printf("\nName            : \t");
+    scanf("%s",P.Name);
+    printf("\nID Number       : \t");
+    scanf("%d",&(P.ID));
+    printf("\nBranch          : \t");
+    scanf("%s",P.Branch);
+    printf("\nSpecialization  : \t");
+    scanf("%s",P.Specialization);
+    printf("\n");
+    return P;
+}
+
+void print(Prof P){
+    printf("--------------------------------------\n");
+    printf("Professor Details : \n");
+    printf("Name            :   %s\n",P.Name);
+    printf("ID              :   %d\n",P.ID);
+    printf("Brach           :   %s\n",P.Branch);
+    printf("Specialization  :   %s\n",P.Specialization);
+    printf("--------------------------------------\n");
+    return;
+}
+
+// Queue Operations
+
+Node* queue_head, *queue_tail;
+void enqueue(Prof P){
+    if(queue_head==NULL){
+        queue_head = getnode(P);
+        queue_tail = queue_head;
+    }
+    else{
+        queue_tail->next = getnode(P);
+        queue_tail->next->prev = queue_tail;
+        queue_tail = queue_tail->next;
+    }
+    return;
+}
+
+void dequeue(){
+    if(queue_head==NULL){
+        printf("Queue UnderFlow!!\n");
+        return;
+    }
+    printf("Details Of Professor %s Has Been DeQueued\n",queue_head->P.Name);
+    if(queue_head->next!=NULL){
+        queue_head = queue_head->next;
+        free(queue_head->prev);
+        queue_head->prev = NULL;
+    }
+    else{
+        free(queue_head);
+        queue_head = NULL;
+    }
+    return;
+}
+
+void qprint(){
+    if(queue_head==NULL){
+        printf("No Records Available\n");
+        return;
+    }
+    Node* temp = queue_head;
+    while(temp){
+        print(temp->P);
+        temp = temp->next;
+    }
+    return;
+
+}
+
+//Stack Operations
+
+Node* stack_head;
+void push(Prof P){
+    if(stack_head==NULL){
+        stack_head = getnode(P);
+        return;
+    }
+    stack_head->prev = getnode(P);
+    stack_head->prev->next = stack_head;
+    stack_head = stack_head->prev;
+    return;
+}
+
+void pop(){
+    if(stack_head==NULL){
+        printf("Stack UnderFlow!!\n");
+        return;
+    }
+    printf("Details Of Professor %s Has Been Popped\n",stack_head->P.Name);
+    if(stack_head->next!=NULL){
+        stack_head = stack_head->next;
+        free(stack_head->prev);
+        stack_head->prev = NULL;
+    }
+    else{
+        free(stack_head);
+        stack_head = NULL;
+    }
+    return;
+}
+
+void stprint(){
+    if(stack_head==NULL){
+        printf("No Records Available\n");
+        return;
+    }
+    Node* temp = stack_head;
+    while(temp){
+        print(temp->P);
+        temp = temp->next;
+    }
+    return;
+}
+
+
+void queue(){
+    queue_head = NULL;
+    queue_tail = NULL;
+    int choice;
+    printf("--------------------\n");
+    printf("Welcome to Queue\n");
+    printf("--------------------\n");
+    do{
+        printf("--------------------\n");
+        printf("Enter Your Choice\n");
+        printf("1.EnQueue Records\n2.DeQueue Records\n3.Display Records\n4.Exit Queue\n");
+        printf("--------------------\n");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1 :    enqueue(getdata());
+                        break;
+            case 2 :    dequeue();
+                        break;
+            case 3 :    qprint();
+                        break;
+            case 4 :    printf("End Of Queue\n");
+                        printf("-------------------------\n");
+                        break;
+            default :   printf("You Entered Invalid Choice\n");
+                        break;
+        }
+    }while(choice!=4);
+}
+
+void stack(){
+    stack_head = NULL;
+    int choice;
+    printf("--------------------\n");
+    printf("Welcome to Stack\n");
+    printf("--------------------\n");
+    do{
+        printf("--------------------\n");
+        printf("Enter Your Choice\n");
+        printf("1.Push Records\n2.Pop Records\n3.Display Records\n4.Exit Stack\n");
+        printf("--------------------\n");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1 :    push(getdata());
+                        break;
+            case 2 :    pop();
+                        break;
+            case 3 :    stprint();
+                        break;
+            case 4 :    printf("End Of Stack\n");
+                        printf("-------------------------\n");
+                        break;
+            default :   printf("You Entered Invalid Choice\n");
+                        break;
+        }
+    }while(choice!=4);
+}
+
+
+int main(){
+    int choice;
+    do{
+        printf("---------------------------------------\n");
+        printf("Welcome To Professor's DataBase\n");
+        printf("Enter Your Choice Of Data Structure For Records\n");
+        printf("1.Queue\n2.Stacks\n3.Exit\n");
+        printf("---------------------------------------\n");
+        scanf("%d", &choice);
+        switch(choice){
+            case 1  : queue();break;
+            case 2  : stack();break;
+            case 3  : printf("Thank You!!\n");break;
+            default : printf("You Entered Invalid Choice\n");break;
+        }
+    }while(choice!=3);
+    return 0;
+}
+
+
+
