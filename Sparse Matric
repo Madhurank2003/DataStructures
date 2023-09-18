@@ -1,0 +1,95 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct Element{
+    int r;
+    int c;
+    int ele;
+};
+
+struct Sparse{
+    int m;
+    int n;
+    int nums;
+    struct Element *e;
+};
+
+
+void create(struct Sparse *s){
+    printf("Enter the Dimensions and number of Non Zero Elements\n");
+    scanf("%d %d %d",&s->m,&s->n,&s->nums);
+    s->e = (struct Element *)calloc(s->nums,sizeof(struct Element));
+    printf("Enter the Data\n");
+    for(int i=0;i<s->nums;i++){
+        scanf("%d %d %d",&(s->e[i].r), &(s->e[i].c), &(s->e[i].ele));
+    }
+    printf("\n");
+}
+
+void display(struct Sparse s){
+    int k=0;
+     for(int i=1;i<=s.m;i++){
+         for(int j=1;j<=s.n;j++){
+             if(i==s.e[k].r && j==s.e[k].c){
+                 printf("%d ",s.e[k++].ele);
+             }
+             else{
+                 printf("0 ");
+             }
+         }
+         printf("\n");
+     }
+}
+
+void add(struct Sparse *s1, struct Sparse *s2, struct Sparse *sum){
+    if(s1->m!=s2->m || s1->n!=s2->n){
+        printf("Addition Not Possible\n");
+        return;
+    }
+    sum->m = s1->m;
+    sum->n = s1->n;
+    sum->nums = s1->nums+s2->nums;
+    sum->e = (struct Element *)calloc(sum->nums,sizeof(struct Element));
+    
+    int i=0,j=0,k=0;
+    while(i<s1->nums && j<s2->nums){
+        if(s1->e[i].r < s2->e[j].r){
+            sum->e[k++] = s1->e[i++];
+        }
+        else if(s1->e[i].r > s2->e[j].r){
+            sum->e[k++] = s2->e[j++];
+        }
+        else{
+            if(s1->e[i].c < s2->e[i].c){
+                sum->e[k++] = s1->e[i++];
+            }
+            else if (s1->e[i].c > s2->e[j].c){
+                sum->e[k++] = s2->e[j++];
+            }
+            else{
+                // sum->e[k].r = s1->e[i].r;
+                // sum->e[k].c = s1->e[i].c;
+                sum->e[k++].ele = s1->e[i++].ele + s2->e[j++].ele;
+            }
+        }
+    }
+    while(i<s1->nums){
+        sum->e[k++] = s1->e[i++];
+    }
+    while(j<s2->nums){
+        sum->e[k++] = s2->e[j++];
+    }
+    return;
+}
+
+int main(){
+    struct Sparse S1;
+    struct Sparse S2;
+    struct Sparse sum;
+    create(&S1);
+    //display(S1);
+    create(&S2);
+    add(&S1,&S2,&sum);
+    display(sum);
+    return 0;
+}
+
