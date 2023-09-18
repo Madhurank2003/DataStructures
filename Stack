@@ -1,0 +1,96 @@
+#include <iostream>
+
+using namespace std;
+#define SIZE 5
+class stack{
+    private: 
+        int top;
+        int *arr;
+    public:
+        stack();
+        bool isempty();
+        bool isfull();
+        int top_();
+        void pop();
+        void push(int data);
+        void display();
+};
+
+stack::stack(){
+    top=-1;
+    arr = new int[SIZE];
+}
+
+bool stack::isempty(){
+    if(top==-1){
+        return true;
+    }
+    return false;
+}
+
+bool stack::isfull(){
+    if(top==SIZE-1){
+        return true;
+    }
+    return  false;
+}
+
+int stack::top_(){
+    if(isempty()){
+        return -1;
+    }
+    return arr[top];
+}
+
+void stack::pop(){
+    if(isempty()){
+        return;
+    }
+    top--;
+    return;
+}
+
+void stack::push(int data){
+    if(isfull()){
+        return;
+    }
+    top++;
+    arr[top] = data;
+    return;
+    
+}
+
+void stack::display(){
+    if(isempty()){
+        cout<<"Stack is Empty\n";
+        return;
+    }
+    cout<<"Stack Contains\n";
+    for(int i=top;i>=0;i--){
+        cout<<" "<<arr[i]<<endl;
+    }
+    return;
+}
+int main()
+{
+    stack s;
+    int ch;
+    do{
+        cout<<"--------------------"<<endl;
+        cout<<"Enter Your Choice\n1.Push\n2.Pop\n3.Top\n4.Display\n5.Exit\n";
+        cout<<"--------------------"<<endl;
+        cin>>ch;
+        switch(ch){
+            case 1 :    int ele;
+                        cout<<"Enter the Element to be Pushed\n";
+                        cin>>ele;
+                        s.push(ele);
+                        break;
+            case 2 :  s.pop();break;
+            case 3 : cout<<s.top_()<<endl;break;
+            case 4 : s.display();break;
+        }
+    }while(ch!=5);
+    return 0;
+}
+
