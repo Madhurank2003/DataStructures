@@ -1,0 +1,271 @@
+#include<iostream>
+using namespace std;
+
+
+struct root{
+    int data;
+    root* left;
+    root* right;
+};
+
+struct Node{
+    root* data;
+    Node* link;
+};
+
+
+class queue{
+    private:
+        Node* headq;
+        Node* lastq;
+        int count;
+    public:
+        queue();
+        Node* getnode(root* r);
+        void push(root* r);
+        void pop();
+        root* front();
+        bool empty();
+        int size();
+};
+
+queue::queue(){
+    headq = NULL;
+    lastq = NULL;
+    count=0;
+}
+
+Node* queue::getnode(root* r){
+    Node* newnode = new Node;
+    newnode->data = r;
+    newnode->link = NULL;
+    return newnode;
+}
+
+void queue::push(root* r){
+     count++;
+     if(headq==NULL){
+         headq = getnode(r);
+         lastq = headq;
+         return;
+     }
+     lastq->link = getnode(r);
+     lastq = lastq->link;
+     return;
+ }
+ 
+ void queue::pop(){
+     if(headq==NULL){
+         return;
+     }
+     count--;
+     headq = headq->link;
+     return;
+ }
+root* queue::front(){
+    return headq->data;
+}
+
+bool queue::empty(){
+    if(headq==NULL){
+        return true;
+    }
+    return false;
+}
+int queue::size(){
+    return count;
+}
+
+class bintree{
+    private: 
+        root* headroot;
+    public:
+        bintree();
+        root* getroot(int data);
+        root* gethead();
+        void creation();
+        void preorder(root* r);
+        void postorder(root* r);
+        void inorder(root* r);
+        void level_order();
+        int height(root*);
+        int cnode(root*);
+        void flatten();
+        void flatten(root*);
+};
+
+bintree::bintree(){
+    headroot = NULL;
+}
+root* bintree::getroot(int data){
+    root* newroot = new root;
+    newroot->data = data;
+    newroot->left=NULL;
+    newroot->right=NULL;
+    return newroot;
+}
+
+root* bintree::gethead(){
+    return headroot;
+}
+
+void bintree::creation(){
+    queue q;
+    headroot = getroot(0);
+    cout<<"Enter the Value of Head Root\n";
+    cin>>headroot->data;
+    q.push(headroot);
+    while(!q.empty()){
+        root* curr = q.front();
+        q.pop();
+        root* templeft = getroot(0);
+        root* tempright = getroot(0);
+        
+        cout<<"Enter value of Left Child\n";
+        cin>>templeft->data;
+        cout<<"Enter Value of Right Child\n";
+        cin>>tempright->data;
+        
+        if(templeft->data!=-1){
+            curr->left = templeft;
+            q.push(templeft);
+        }
+        if(tempright->data!=-1){
+            curr->right = tempright;
+            q.push(tempright);
+        }
+    }
+    return;
+}
+
+void bintree::preorder(root* r){
+    if(r==NULL){
+        return;
+    }
+    cout<<r->data<<" ";
+    preorder(r->left);
+    preorder(r->right);
+}
+
+void bintree::inorder(root* r){
+    if(r==NULL){
+        return;
+    }
+    
+    inorder(r->left);
+    cout<<r->data<<" ";
+    inorder(r->right);
+}
+
+void bintree::postorder(root* r){
+    if(r==NULL){
+        return;
+    }
+    postorder(r->left);
+    postorder(r->right);
+    cout<<r->data<<" ";
+}
+
+void bintree::level_order(){
+    queue q;
+    q.push(headroot);
+    while(!q.empty()){
+        int n = q.size();
+        for(int i=0;i<n;i++){
+            root* curr = q.front();
+            q.pop();
+            cout<<curr->data<<" ";
+            if(curr->left){
+                q.push(curr->left);
+            }
+            if(curr->right){
+                q.push(curr->right);
+            }
+        }
+        cout<<endl;
+    }
+}
+
+int bintree::height(root* r){
+    if(r==NULL){
+        return 0;
+    }
+    int x = height(r->left);
+    int y = height(r->right);
+    return max(x,y)+1;
+}
+
+int bintree::cnode(root* r){
+    if(r==NULL){
+        return 0;
+    }
+    return (cnode(r->left) + cnode(r->right) + 1);
+}
+
+
+void bintree::flatten(root* head){
+    if(head==NULL || (head->left==NULL && head->right==NULL)){
+        return;
+    }
+
+    if(head->left!=NULL){
+        flatten(head->left);
+        root* tempright = head->right;
+        head->right = head->left;
+        head->left = NULL;
+        root* temp = head->right;
+        while(temp->right){
+            temp = temp->right;
+        }
+        temp->right = tempright;
+    }
+    flatten(head->right);
+}
+
+
+void bintree::flatten(){
+    flatten(headroot);
+    return;
+}
+
+int main(){
+    bintree b1;
+    cout<<"\n-----------------Binary Tree Creation------------------\n\n";
+    b1.creation();
+    cout<<endl;
+    cout<<"-----------------Newly Created Tree---------------------\n\n";
+    cout<<"Pre Order Traveral"<<endl;
+    b1.preorder(b1.gethead());
+    cout<<endl;
+    cout<<"Inorder Traversal"<<endl;
+    b1.inorder(b1.gethead());
+    cout<<endl;
+    cout<<"Post Order Traversal"<<endl;
+    b1.postorder(b1.gethead());
+    cout<<endl;
+    cout<<"Level Order Traversal"<<endl;
+    b1.level_order();
+    cout<<endl;
+    cout<<"Height\n"<<b1.height(b1.gethead())<<endl;
+    cout<<"Number of Nodes\n"<<b1.cnode(b1.gethead())<<endl;
+    cout<<"--------------Tree Converted To Linked List----------------\n\n";
+    b1.flatten();
+    cout<<"Pre Order Traveral"<<endl;
+    b1.preorder(b1.gethead());
+    cout<<endl;
+    cout<<"Inorder Traversal"<<endl;
+    b1.inorder(b1.gethead());
+    cout<<endl;
+    cout<<"Post Order Traversal"<<endl;
+    b1.postorder(b1.gethead());
+    cout<<endl;
+    cout<<"Level Order Traversal"<<endl;
+    b1.level_order();
+    cout<<endl;
+    cout<<"Height\n"<<b1.height(b1.gethead())<<endl;
+    cout<<"Number of Nodes\n"<<b1.cnode(b1.gethead())<<endl;
+    return 0;
+}
+
+
+
