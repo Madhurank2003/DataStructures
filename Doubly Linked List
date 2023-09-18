@@ -1,0 +1,142 @@
+// Program to Demonstrate Doubly Linked List
+
+#include <stdio.h>
+#include<stdlib.h>
+
+struct node{
+    int data;
+    struct node* next;
+    struct node* prev;
+};
+typedef struct node* Node;
+
+Node getnode(int data){
+    Node newnode = (Node)malloc(sizeof(struct node));
+    newnode->data = data;
+    newnode->next = newnode->prev = NULL;
+    return newnode;
+}
+
+Node insert_begin(Node head,int data){
+    if(head==NULL){
+        return getnode(data);
+    }
+    Node newhead = getnode(data);
+    newhead->next = head;
+    head->prev = newhead;
+    head = newhead;
+    return head;
+}
+
+Node insert_at_pos(Node head, int ele,int pos){
+    Node newnode = getnode(ele);
+    Node temp =head;
+    int i;
+    for(i=0;i<pos-2;i++){
+        temp = temp->next;
+    }
+    newnode->prev = temp;
+    newnode->next = temp->next;
+    temp->next = newnode;
+    if(newnode->next!=NULL){
+        newnode->next->prev  = newnode;
+    }
+    return head;
+}
+
+Node insert_end(Node head,int ele){
+    Node newnode = getnode(ele);
+    Node temp = head;
+    while(temp->next!=NULL){
+        temp = temp->next;
+    }
+    temp->next = newnode;
+    newnode->prev = temp;
+    return head;
+}
+
+Node delete_begin(Node head){
+    if(head==NULL || head->next==NULL){
+        free(head);
+        return NULL;
+    }
+    head = head->next;
+    free(head->prev);
+    head->prev  = NULL;
+    return head;
+}
+
+Node delete_at_pos(Node head,int pos){
+    Node temp = head;
+    for(int i=0;i<pos-2;i++){
+        temp = temp->next;
+    }
+    temp->next = temp->next->next;
+    free(temp->next->prev);
+    temp->next->prev = temp;
+    return head;
+    
+}
+
+Node delete_end(Node head){
+    Node temp  = head;
+    while(temp->next!=NULL){
+        temp = temp->next;
+    }
+    temp->prev->next = NULL;
+    free(temp);
+    return head;
+}
+
+void display(Node head){
+    if(head==NULL){
+        printf("The List is Empty\n");
+        return;
+    }
+    printf("The List Contains:\n");
+    Node temp = head;
+    while(temp!=NULL){
+        printf("%d ",temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+    return;
+}
+
+int main() {
+    printf("--------------Doubly Linked List--------------\n");
+    Node head = NULL;
+    int choice,ele,pos;
+    do{
+        printf("Enter your choice\n");
+        printf("1.Insert_Begin\t5.Delete_Begin\n2.Insert_Pos\t6.Delete_Pos\n3.Insert_End\t7.Delete_End\n4.Display\t\t8.Exit\n");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1 : printf("Enter the Element :\n");
+                    scanf("%d",&ele);
+                    head = insert_begin(head,ele);
+                    break;
+            case 2 :printf("Enter the Element and Position\n");
+                    scanf("%d %d",&ele,&pos);
+                    head = insert_at_pos(head,ele,pos);
+                    break;
+            case 3 : printf("Enter the Element:\n");
+                    scanf("%d",&ele);
+                    head = insert_end(head,ele);
+                    break;
+            case 4 : display(head);break;
+            case 5 : head = delete_begin(head);break;
+            case 6: printf("Enter the Position\n");
+                    scanf("%d",&pos);
+                    head = delete_at_pos(head,pos);
+                    break;
+            case 7: head= delete_end(head);
+                    break;
+            case 8: printf("End of Doubly Linked List\n");
+                    break;
+            default:printf("Invalid Choice\n");break;
+
+        }
+    }while(choice!=8);
+    return 0;
+}
